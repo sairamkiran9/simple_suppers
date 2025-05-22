@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, ActivityIndicator, StyleSheet, ScrollView } from 'react-native';
 import CustomInput from '../components/CustomInput';
@@ -194,3 +195,26 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
+=======
+import React from "react";
+import { View, Button, StyleSheet } from "react-native";
+import { useGoogleAuth } from "../api/auth";
+
+export default function LoginScreen() {
+  const { promptAsync } = useGoogleAuth();
+
+  return (
+    <View style={styles.container}>
+      <Button title="Sign in with Google" onPress={() => promptAsync()} />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+});
+>>>>>>> 3fa5ade (working on google sigins and firebase)
