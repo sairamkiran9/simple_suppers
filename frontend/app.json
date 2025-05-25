@@ -13,10 +13,12 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.simple.suppers",
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
+        "package": "com.simplesuppers.app",
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
@@ -27,6 +29,7 @@
     },
     "plugins": [
       "expo-web-browser"
-    ]
+    ],
+    "scheme": "com.simple.suppers"
   }
 }

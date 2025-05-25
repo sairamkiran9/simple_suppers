@@ -7,3 +7,6 @@
 7. npm install @reduxjs/toolkit react-redux axios react-navigation react-native-screens react-native-safe-area-context @react-navigation/native @react-navigation/native-stack jwt-decode
 8. npx expo install expo-auth-session expo-web-browser
 9. npm install jwt-decode
+10. npm install -D tailwindcss postcss autoprefixer
+11. npx tailwindcss init -p
+
