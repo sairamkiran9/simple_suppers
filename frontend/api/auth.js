@@ -28,20 +28,23 @@ const auth = getAuth(firebaseApp);
 // 🔐 Hook to handle Google Sign-In
 export const useGoogleAuth = () => {
   const redirectUri = AuthSession.makeRedirectUri({
-    useProxy: false, // ✅ you're testing on web, so no proxy
+    useProxy: true, // ✅ you're testing on web, so no proxy
   });
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     clientId:
       "948449411635-dbihbjbvcitoakmlcgbpburh2bl9j0ve.apps.googleusercontent.com",
-    redirectUri, // ✅ MUST be passed explicitly
+    redirectUri,
+    responseType: "id_token",
+    scopes: ["openid", "email", "profile"],
   });
 
   useEffect(() => {
     console.log("OAuth response:", response); // Debugging
 
     if (response?.type === "success") {
-      const { id_token } = response.authentication;
+      console.log(response);
+      const { id_token } = response.params;
       const credential = GoogleAuthProvider.credential(id_token);
 
       signInWithCredential(auth, credential)
