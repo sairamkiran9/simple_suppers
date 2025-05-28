@@ -1,7 +1,7 @@
 # Logs
 logs/
 *.log
-backend
+
 # Python
 __pycache__/
 *.py[cod]
@@ -29,3 +29,8 @@ Thumbs.db
 
 # Other
 *mermaid
+*backend1
+
+*workspace
+*lld/
+*.gz
