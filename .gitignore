@@ -1,0 +1,31 @@
+# Logs
+logs/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.env
+.env.*
+
+# Tests and Coverage
+coverage/
+*.cover
+*.pyc
+test/
+tests/
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# System
+Thumbs.db
+
+# Other
+*mermaid
