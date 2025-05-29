@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
-import CustomInput from '../components/CustomInput';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import CustomInput from "../components/CustomInput";
 
 const RegisterScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    username: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
-    role: '',
+    fullName: "",
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
+    role: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -215,4 +223,4 @@ const RegisterScreen = ({ navigation }) => {
   );
 };
 
-export default Register;
+export default RegisterScreen;
