@@ -43,7 +43,7 @@ export const useGoogleAuth = (navigation) => {
           console.log("Firebase Signed in as:", userCredential.user.email);
 
           dispatch(setUser(userCredential.user));
-          navigation.navigate("PlannerProfile");
+          navigation.replace("Home");
           // // Fetch Google user profile info
           // fetch("https://www.googleapis.com/userinfo/v2/me", {
           //   headers: { Authorization: `Bearer ${access_token}` },

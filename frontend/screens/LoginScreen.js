@@ -28,10 +28,13 @@ const LoginScreen = ({ navigation }) => {
     setErrorMessage("");
     try {
       const res = await loginUser(email, password);
-      dispatch(setUser(res));
-      navigation.navigate("PlannerProfile");
-    } catch (error) {
-      setErrorMessage(loginErrorTypes(error));
+      // dispatch(setUser(res));
+      console.log('loginUser result:', res);
+    dispatch(setUser(res));
+    console.log('Login successful!');
+      navigation.replace('Home');
+    } catch (err) {
+      Alert.alert('Login failed', err.message);
     } finally {
       setLoading(false);
     }
