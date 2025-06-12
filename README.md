@@ -29,7 +29,7 @@ docker-compose logs -f     # View logs if needed
   - Password: `admin123`
   - Master Password: `admin123`
 - **Database**: `simplesuppers`
-  - Username: `kiran`
+  - Username: `postgres`
   - Password: `secret123`
 
 
