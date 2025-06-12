@@ -10,3 +10,8 @@
 10. npm install -D tailwindcss postcss autoprefixer
 11. npx tailwindcss init -p
 
+# Database Setup
+- docker-compose up -d # to run in detach mode
+- docker-compose up # to see logs
+- Open http://localhost:5050/ for pgadmin console. Docker compose takes care of setting up postgres, jsut enter admin123 to use the config if it asks for master password.
+- SimpleSuppers db passowrd: secret123
