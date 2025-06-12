@@ -1,17 +1,89 @@
-1. npx create-expo-app frontend --template
-2. cd frontend
-3. npm install @react-navigation/native @react-navigation/native-stack
-4. npm install react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-reanimated react-native-vector-icons
-5. npm install redux react-redux
-6. npx expo install react-dom react-native-web @expo/metro-runtime
-7. npm install @reduxjs/toolkit react-redux axios react-navigation react-native-screens react-native-safe-area-context @react-navigation/native @react-navigation/native-stack jwt-decode
-8. npx expo install expo-auth-session expo-web-browser
-9. npm install jwt-decode
-10. npm install -D tailwindcss postcss autoprefixer
-11. npx tailwindcss init -p
+# SimpleSuppers
 
-# Database Setup
-- docker-compose up -d # to run in detach mode
-- docker-compose up # to see logs
-- Open http://localhost:5050/ for pgadmin console. Docker compose takes care of setting up postgres, jsut enter admin123 to use the config if it asks for master password.
-- SimpleSuppers db passowrd: secret123
+Food delivery application with:
+- React Native frontend (Expo)
+- Express + TypeScript backend
+- PostgreSQL + Prisma ORM
+- Dockerized local database with pgAdmin
+
+## Project Setup
+
+### Frontend (React Native)
+- Server runs at [http://localhost:8081](http://localhost:8081)
+    ```
+    cd frontend
+    npm install
+    npx expo start
+    ```
+
+### Database Setup (PostgreSQL + pgAdmin)
+
+```
+docker-compose up -d       # Run containers in background
+docker-compose logs -f     # View logs if needed
+```
+
+- **pgAdmin**: [http://localhost:5050](http://localhost:5050)
+- **pgAdmin**:
+  - Email: `admin@admin.com`
+  - Password: `admin123`
+  - Master Password: `admin123`
+- **Database**: `simplesuppers`
+  - Username: `kiran`
+  - Password: `secret123`
+
+
+### Prisma (ORM)
+
+- Run migration:
+
+    ```
+    npx prisma migrate dev --name init
+    ```
+
+- Open Prisma Studio (GUI DB explorer):
+
+    ```
+    npx prisma studio
+    ```
+
+- Access: [http://localhost:5555](http://localhost:5555)
+
+
+### Backend (Express + TypeScript)
+
+- Server runs at: [http://localhost:3000](http://localhost:3000)
+
+    ```
+    cd backend
+    npm install
+    npm run dev
+    ```
+
+
+
+## API Usage
+
+### \[POST] `/person` — Create a person
+
+```
+curl --location 'http://localhost:3000/person' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "firstname": "John",
+  "lastname": "Mark",
+  "email": "kjmn@example.com",
+  "phone": "1234567890"
+}'
+```
+
+Returns: JSON of the created person
+
+
+
+## 📚 API Documentation (OpenAPI Support)
+
+- Access to Swagger/OpenAPI at: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
+
+

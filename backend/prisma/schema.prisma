@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  PENDING
+  IN_PROGRESS
+  DELIVERED
+  CANCELLED
+}
+
+model Person {
+  id         Int        @id @default(autoincrement())
+  firstname  String
+  lastname   String
+  email      String     @unique
+  phone      String?
+  createdAt  DateTime   @default(now())
+
+  address    Address?
+  producer   Producer?
+  consumer   Consumer?
+}
+
+model Address {
+  id        Int     @id @default(autoincrement())
+  street    String
+  city      String
+  state     String
+  zipCode   String
+  personId  Int     @unique
+  person    Person  @relation(fields: [personId], references: [id])
+}
+
+model Producer {
+  id             Int         @id @default(autoincrement())
+  licenseNumber  String      @unique
+  personId       Int         @unique
+  person         Person      @relation(fields: [personId], references: [id])
+  menuItems      MenuItem[]
+}
+
+model Consumer {
+  id         Int         @id @default(autoincrement())
+  personId   Int         @unique
+  person     Person      @relation(fields: [personId], references: [id])
+  orders     FoodOrder[]
+}
+
+model MenuItem {
+  id            Int        @id @default(autoincrement())
+  name          String
+  price         Float
+  description   String?
+  maxLimit      Int        @default(100)
+  createdAt     DateTime   @default(now())
+
+  producerId    Int
+  producer      Producer   @relation(fields: [producerId], references: [id])
+  orderItems    OrderItem[]
+}
+
+model FoodOrder {
+  id           Int           @id @default(autoincrement())
+  totalPrice   Float
+  status       OrderStatus
+  createdAt    DateTime      @default(now())
+
+  consumerId   Int
+  consumer     Consumer      @relation(fields: [consumerId], references: [id])
+  items        OrderItem[]
+}
+
+model OrderItem {
+  id         Int        @id @default(autoincrement())
+  quantity   Int
+
+  orderId    Int
+  itemId     Int
+  order      FoodOrder  @relation(fields: [orderId], references: [id])
+  menuItem   MenuItem   @relation(fields: [itemId], references: [id])
+}
