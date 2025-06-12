@@ -101,7 +101,7 @@ const LoginScreen = ({ navigation }) => {
             onPress={() => promptAsync()}
             disabled={!request}
           >
-            <Text style={styles.googleButtonText}>Login with Google</Text>
+            <Text style={styles.googleButtonText}>Continue with Google</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
