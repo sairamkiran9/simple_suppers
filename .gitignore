@@ -31,4 +31,4 @@ Thumbs.db
 *mermaid
 *workspace
 *.gz
-lld/design.py
+docs/design/design.py
