@@ -29,3 +29,6 @@ Thumbs.db
 
 # Other
 *mermaid
+*workspace
+*.gz
+docs/design/design.py
