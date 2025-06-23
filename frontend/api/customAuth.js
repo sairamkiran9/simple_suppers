@@ -31,7 +31,13 @@ export const loginUser = async (email, password) => {
       email,
       password
     );
-    return userCredential.user;
+    const user = userCredential.user;
+    const token = await user.getIdToken();
+
+    return {
+      user,
+      token,
+    };
   } catch (error) {
     console.error("Login error:", error);
     throw error;

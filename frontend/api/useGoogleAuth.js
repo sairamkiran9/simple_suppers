@@ -42,7 +42,12 @@ export const useGoogleAuth = (navigation) => {
         .then((userCredential) => {
           console.log("Firebase Signed in as:", userCredential.user.email);
 
-          dispatch(setUser(userCredential.user));
+          dispatch(
+            setUser({
+              userInfo: userCredential.user, // This becomes `userInfo` in Redux
+              token: id_token, // This becomes `token` in Redux
+            })
+          );
           navigation.replace("Home");
           // // Fetch Google user profile info
           // fetch("https://www.googleapis.com/userinfo/v2/me", {

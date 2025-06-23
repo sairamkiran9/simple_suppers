@@ -29,12 +29,18 @@ const LoginScreen = ({ navigation }) => {
     try {
       const res = await loginUser(email, password);
       // dispatch(setUser(res));
-      console.log('loginUser result:', res);
-    dispatch(setUser(res));
-    console.log('Login successful!');
-      navigation.replace('Home');
+      console.log("loginUser result:", res);
+      dispatch(setUser(res));
+      dispatch(
+        setUser({
+          userInfo: res.user, // This becomes `userInfo` in Redux
+          token: res.token, // This becomes `token` in Redux
+        })
+      );
+      console.log("Login successful!");
+      navigation.replace("Home");
     } catch (err) {
-      Alert.alert('Login failed', err.message);
+      Alert.alert("Login failed", err.message);
     } finally {
       setLoading(false);
     }
