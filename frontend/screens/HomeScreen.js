@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/userSlice"; // update path as needed
 import { persistor } from "../redux/store"; // this must be exported in store.js
+import { getToken } from "../api/getToken";
+import { handleLogout } from "../utils/logout";
 
 import {
   View,
@@ -17,6 +19,7 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
+import axios from "axios";
 
 const { width } = Dimensions.get("window");
 
@@ -29,6 +32,20 @@ const categories = [
   "Healthy",
   "Dessert",
 ];
+
+const testapi = async () => {
+  try {
+    const token = await getToken();
+    const result = await axios.get("http://localhost:3000/test/testapi", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("API response", result.data);
+  } catch (error) {
+    console.error("API called failed", error.respose?.data || error.message);
+  }
+};
 
 const featured = [
   {
@@ -72,18 +89,6 @@ const HomeScreen = ({ navigation }) => {
   const [planners, setPlanners] = useState(mealPlanners);
   const dispatch = useDispatch();
 
-  const handleLogout = async () => {
-    // TODO: Add your logout logic here (clear user, tokens, etc.)\
-    dispatch(logout());
-
-    // Clear persisted state
-    await persistor.purge();
-
-    // Navigate to login screen
-    navigation.replace("Login");
-    Alert.alert("Logged out", "You have been logged out.");
-    navigation.replace("Login");
-  };
   const user = useSelector((state) => state.user.userInfo);
 
   useEffect(() => {
@@ -119,7 +124,10 @@ const HomeScreen = ({ navigation }) => {
           />
           <Text style={styles.headerGreeting}>Hi, John!</Text>
         </View>
-        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+        <TouchableOpacity
+          style={styles.logoutBtn}
+          onPress={() => handleLogout(dispatch, navigation)}
+        >
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -252,6 +260,9 @@ const HomeScreen = ({ navigation }) => {
           ))
         )}
       </ScrollView>
+      <div>
+        <button onClick={testapi}>test</button>
+      </div>
     </View>
   );
 };

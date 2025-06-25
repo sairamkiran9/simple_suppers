@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/userSlice"; // update path as needed
 import { persistor } from "../redux/store"; // this must be exported in store.js
+import { handleLogout } from "../utils/logout";
 
 const PlannerProfileScreen = () => {
   const [user, setUser] = useState(null);
