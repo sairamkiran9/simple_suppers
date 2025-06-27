@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import CustomInput from '../components/CustomInput';
+import { registerUser} from '../api/customAuth';
 
 const RegisterScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -24,7 +25,6 @@ const RegisterScreen = ({ navigation }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      // TODO: Add real validation and API call here
       if (!formData.email || !formData.password || !formData.fullName) {
         Alert.alert('Error', 'Please fill all required fields.');
         return;
@@ -33,12 +33,11 @@ const RegisterScreen = ({ navigation }) => {
         Alert.alert('Error', 'Passwords do not match.');
         return;
       }
-      // Simulate API call
-      setTimeout(() => {
-        setLoading(false);
-        Alert.alert('Success', 'Account created!');
-        navigation.navigate('Login');
-      }, 1000);
+      const user = await registerUser(formData.email, formData.password, formData.fullName);
+      Alert.alert('Success', 'Account created!');
+      navigation.navigate('Login');
+    } catch (error) {
+      Alert.alert('Error', error.message);
     } finally {
       setLoading(false);
     }
