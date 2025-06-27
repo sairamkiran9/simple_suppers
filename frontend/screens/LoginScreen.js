@@ -28,13 +28,11 @@ const LoginScreen = ({ navigation }) => {
     setErrorMessage("");
     try {
       const res = await loginUser(email, password);
-      // dispatch(setUser(res));
       console.log("loginUser result:", res);
-      dispatch(setUser(res));
       dispatch(
         setUser({
-          userInfo: res.user, // This becomes `userInfo` in Redux
-          token: res.token, // This becomes `token` in Redux
+          userInfo: res.user,
+          token: res.token,
         })
       );
       console.log("Login successful!");

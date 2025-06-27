@@ -43,7 +43,17 @@ const testapi = async () => {
     });
     console.log("API response", result.data);
   } catch (error) {
-    console.error("API called failed", error.respose?.data || error.message);
+    console.error("API call failed", error.response?.data || error.message);
+    
+    // Handle authentication errors
+    if (error.message?.includes("Session expired") || 
+        error.response?.status === 401) {
+      Alert.alert(
+        "Session Expired", 
+        "Your session has expired. Please log in again.",
+        [{ text: "OK", onPress: () => handleLogout(dispatch, navigation) }]
+      );
+    }
   }
 };
 
@@ -122,7 +132,9 @@ const HomeScreen = ({ navigation }) => {
             }}
             style={styles.avatar}
           />
-          <Text style={styles.headerGreeting}>Hi, John!</Text>
+          <Text style={styles.headerGreeting}>
+            Hi, {user?.displayName || user?.email?.split('@')[0] || 'User'}!
+          </Text>
         </View>
         <TouchableOpacity
           style={styles.logoutBtn}

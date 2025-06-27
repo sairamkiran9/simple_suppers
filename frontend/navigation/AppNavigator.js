@@ -14,27 +14,23 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={user ? "PlannerProfile" : "Login"}>
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Register"
-          component={RegisterScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="PlannerProfile"
-          component={PlannerProfileScreen}
-          options={{ headerShown: false }}
-        />
+      <Stack.Navigator 
+        initialRouteName={user ? "Home" : "Login"}
+        screenOptions={{ headerShown: false }}
+      >
+        {user ? (
+          // Authenticated user screens
+          <>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="PlannerProfile" component={PlannerProfileScreen} />
+          </>
+        ) : (
+          // Non-authenticated screens
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
