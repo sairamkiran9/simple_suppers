@@ -2,6 +2,10 @@
 logs/
 *.log
 
+# Temporary files
+TEMP*
+temp*
+
 # Python
 __pycache__/
 *.py[cod]
