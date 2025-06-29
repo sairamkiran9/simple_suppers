@@ -71,11 +71,15 @@ export const PersonRepository = {
         }
       });
 
-      // Create address
-      const address = await tx.address.create({
-        data: {
+      // Create or update address
+      const address = await tx.address.upsert({
+        where: { personFirebaseUid: firebaseUid },
+        create: {
           ...data.address,
           personFirebaseUid: firebaseUid,
+        },
+        update: {
+          ...data.address,
         }
       });
 
