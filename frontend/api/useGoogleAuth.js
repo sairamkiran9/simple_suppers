@@ -48,7 +48,8 @@ export const useGoogleAuth = (navigation) => {
               token: id_token, // This becomes `token` in Redux
             })
           );
-          navigation.replace("Home");
+          // Let the auth listener handle navigation
+          console.log('Google OAuth successful - letting auth listener handle navigation');
           // // Fetch Google user profile info
           // fetch("https://www.googleapis.com/userinfo/v2/me", {
           //   headers: { Authorization: `Bearer ${access_token}` },

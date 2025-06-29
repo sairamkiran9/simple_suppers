@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { logout } from "../redux/userSlice"; // update path as needed
-import { persistor } from "../redux/store"; // this must be exported in store.js
+import { logout } from "../redux/userSlice";
+import { persistor } from "../redux/store";
 import { getToken } from "../api/getToken";
 import { handleLogout } from "../utils/logout";
 
@@ -99,11 +99,23 @@ const HomeScreen = ({ navigation }) => {
   const [planners, setPlanners] = useState(mealPlanners);
   const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.user.userInfo);
+  const { userInfo, profile, profileLoading } = useSelector((state) => state.user);
+  
 
   useEffect(() => {
-    console.log("Persisted user:", user);
-  }, [user]);
+    console.log("User info:", userInfo);
+    console.log("Profile data:", profile);
+  }, [userInfo, profile]);
+
+  // Show loading if profile is still syncing
+  if (profileLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6366f1" />
+        <Text style={styles.loadingText}>Syncing your profile...</Text>
+      </View>
+    );
+  }
 
   const handleFavorite = (id) => {
     setPlanners((prev) =>
@@ -126,14 +138,19 @@ const HomeScreen = ({ navigation }) => {
       {/* Header Bar */}
       <View style={styles.headerBar}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Image
-            source={{
-              uri: "https://randomuser.me/api/portraits/men/32.jpg",
-            }}
-            style={styles.avatar}
-          />
+          <TouchableOpacity 
+            onPress={() => navigation.navigate('ProfileCompletion')}
+            style={styles.avatarButton}
+          >
+            <Image
+              source={{
+                uri: profile?.photoURL || userInfo?.photoURL || "https://randomuser.me/api/portraits/men/32.jpg",
+              }}
+              style={styles.avatar}
+            />
+          </TouchableOpacity>
           <Text style={styles.headerGreeting}>
-            Hi, {user?.displayName || user?.email?.split('@')[0] || 'User'}!
+            Hi, {profile?.firstname || profile?.displayName || userInfo?.displayName || userInfo?.email?.split('@')[0] || 'User'}!
           </Text>
         </View>
         <TouchableOpacity
@@ -295,11 +312,13 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     elevation: 8,
   },
+  avatarButton: {
+    marginRight: 10,
+  },
   avatar: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    marginRight: 10,
     borderWidth: 2,
     borderColor: "#fff",
   },
@@ -499,6 +518,17 @@ const styles = StyleSheet.create({
   emptyStateText: {
     color: "#64748b",
     fontSize: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f3f4f6',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#6b7280',
   },
 });
 

@@ -12,7 +12,7 @@ const server = app.listen(PORT, () => {
 process.on('SIGINT', async () => {
   await prisma.$disconnect();
   server.close(() => {
-    console.log('🧼 Gracefully shut down');
+    console.log('Gracefully shut down');
     process.exit(0);
   });
 });

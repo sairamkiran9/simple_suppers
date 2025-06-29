@@ -11,6 +11,7 @@ export const getToken = async (forceRefresh = false) => {
   try {
     // Force refresh can be used to get a fresh token
     const token = await user.getIdToken(forceRefresh);
+    console.log('Access Token for Swagger:', token);
     return token;
   } catch (error) {
     console.error("Token refresh failed:", error);

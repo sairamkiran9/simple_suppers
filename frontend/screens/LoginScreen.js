@@ -36,7 +36,10 @@ const LoginScreen = ({ navigation }) => {
         })
       );
       console.log("Login successful!");
-      navigation.replace("Home");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      });
     } catch (err) {
       Alert.alert("Login failed", err.message);
     } finally {
