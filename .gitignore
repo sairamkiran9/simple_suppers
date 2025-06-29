@@ -10,7 +10,7 @@ temp*
 __pycache__/
 *.py[cod]
 venv/
-.env
+# .env
 .env.*
 
 # Tests and Coverage
