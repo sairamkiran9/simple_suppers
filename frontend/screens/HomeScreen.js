@@ -36,7 +36,7 @@ const categories = [
 const testapi = async () => {
   try {
     const token = await getToken();
-    const result = await axios.get("http://localhost:3000/api/producer/menu", {
+    const result = await axios.get("http://localhost:3000/producer/menu", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
