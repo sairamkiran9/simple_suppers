@@ -15,41 +15,49 @@ enum OrderStatus {
 }
 
 model Person {
-  id         Int        @id @default(autoincrement())
-  firstname  String
-  lastname   String
-  email      String     @unique
-  phone      String?
-  createdAt  DateTime   @default(now())
+  firebaseUid   String   @id  // Firebase UID as primary key
+  email         String   @unique
+  firstname     String?  // Optional initially (from Firebase displayName parsing)
+  lastname      String?  // Optional initially (from Firebase displayName parsing)
+  displayName   String?  // From Firebase (Google OAuth)
+  photoURL      String?  // From Firebase (Google OAuth)
+  phone         String?  // Required for delivery - filled during profile completion
+  emailVerified Boolean  @default(false)
+  
+  // Profile completion tracking
+  profileCompleted Boolean @default(false)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  address    Address?
-  producer   Producer?
-  consumer   Consumer?
+  address       Address?
+  producer      Producer?
+  consumer      Consumer?
 }
 
 model Address {
-  id        Int     @id @default(autoincrement())
-  street    String
-  city      String
-  state     String
-  zipCode   String
-  personId  Int     @unique
-  person    Person  @relation(fields: [personId], references: [id])
+  id             Int     @id @default(autoincrement())
+  street         String
+  city           String
+  state          String
+  zipCode        String
+  personFirebaseUid String @unique
+  person         Person  @relation(fields: [personFirebaseUid], references: [firebaseUid])
 }
 
 model Producer {
-  id             Int         @id @default(autoincrement())
-  licenseNumber  String      @unique
-  personId       Int         @unique
-  person         Person      @relation(fields: [personId], references: [id])
-  menuItems      MenuItem[]
+  id                Int         @id @default(autoincrement())
+  licenseNumber     String      @unique
+  personFirebaseUid String      @unique
+  person            Person      @relation(fields: [personFirebaseUid], references: [firebaseUid])
+  menuItems         MenuItem[]
 }
 
 model Consumer {
-  id         Int         @id @default(autoincrement())
-  personId   Int         @unique
-  person     Person      @relation(fields: [personId], references: [id])
-  orders     FoodOrder[]
+  id                Int         @id @default(autoincrement())
+  personFirebaseUid String      @unique
+  person            Person      @relation(fields: [personFirebaseUid], references: [firebaseUid])
+  orders            FoodOrder[]
 }
 
 model MenuItem {

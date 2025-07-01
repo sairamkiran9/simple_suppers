@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import CustomInput from '../components/CustomInput';
+import { registerUser} from '../api/customAuth';
 
 const RegisterScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -13,35 +14,146 @@ const RegisterScreen = ({ navigation }) => {
     role: '',
   });
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  // Validation functions
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    return password.length >= 6;
+  };
+
+  const validateFullName = (name) => {
+    return name.trim().length >= 2;
+  };
+
+  const validateField = (field, value) => {
+    let error = '';
+    
+    switch (field) {
+      case 'fullName':
+        if (!value.trim()) {
+          error = 'Full name is required';
+        } else if (!validateFullName(value)) {
+          error = 'Full name must be at least 2 characters';
+        }
+        break;
+      
+      case 'email':
+        if (!value.trim()) {
+          error = 'Email is required';
+        } else if (!validateEmail(value)) {
+          error = 'Please enter a valid email address';
+        }
+        break;
+      
+      case 'password':
+        if (!value) {
+          error = 'Password is required';
+        } else if (!validatePassword(value)) {
+          error = 'Password must be at least 6 characters';
+        }
+        break;
+      
+      case 'confirmPassword':
+        if (!value) {
+          error = 'Please confirm your password';
+        } else if (value !== formData.password) {
+          error = 'Passwords do not match';
+        }
+        break;
+    }
+    
+    return error;
+  };
 
   const handleChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,
     }));
+
+    // Real-time validation
+    if (touched[field]) {
+      const error = validateField(field, value);
+      setErrors(prev => ({
+        ...prev,
+        [field]: error,
+      }));
+    }
+
+    // Special case for password confirmation
+    if (field === 'password' && touched.confirmPassword) {
+      const confirmError = validateField('confirmPassword', formData.confirmPassword);
+      setErrors(prev => ({
+        ...prev,
+        confirmPassword: confirmError,
+      }));
+    }
+  };
+
+  const handleBlur = (field) => {
+    setTouched(prev => ({
+      ...prev,
+      [field]: true,
+    }));
+
+    const error = validateField(field, formData[field]);
+    setErrors(prev => ({
+      ...prev,
+      [field]: error,
+    }));
   };
 
   const handleSubmit = async () => {
+    // Validate all fields
+    const fieldsToValidate = ['fullName', 'email', 'password', 'confirmPassword'];
+    const newErrors = {};
+    let hasErrors = false;
+
+    fieldsToValidate.forEach(field => {
+      const error = validateField(field, formData[field]);
+      if (error) {
+        newErrors[field] = error;
+        hasErrors = true;
+      }
+    });
+
+    // Mark all fields as touched
+    const newTouched = {};
+    fieldsToValidate.forEach(field => {
+      newTouched[field] = true;
+    });
+
+    setTouched(newTouched);
+    setErrors(newErrors);
+
+    if (hasErrors) {
+      Alert.alert('Validation Error', 'Please fix the errors below and try again.');
+      return;
+    }
+
     setLoading(true);
     try {
-      // TODO: Add real validation and API call here
-      if (!formData.email || !formData.password || !formData.fullName) {
-        Alert.alert('Error', 'Please fill all required fields.');
-        return;
-      }
-      if (formData.password !== formData.confirmPassword) {
-        Alert.alert('Error', 'Passwords do not match.');
-        return;
-      }
-      // Simulate API call
-      setTimeout(() => {
-        setLoading(false);
-        Alert.alert('Success', 'Account created!');
-        navigation.navigate('Login');
-      }, 1000);
+      const user = await registerUser(formData.email, formData.password, formData.fullName);
+      Alert.alert('Success', 'Account created successfully!', [
+        { text: 'OK', onPress: () => navigation.navigate('Login') }
+      ]);
+    } catch (error) {
+      Alert.alert('Registration Failed', error.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper component for error messages
+  const ErrorText = ({ error }) => {
+    if (!error) return null;
+    return <Text style={styles.errorText}>{error}</Text>;
   };
 
   return (
@@ -56,33 +168,53 @@ const RegisterScreen = ({ navigation }) => {
               placeholder="Full Name"
               value={formData.fullName}
               onChangeText={val => handleChange('fullName', val)}
-              style={styles.input}
+              onBlur={() => handleBlur('fullName')}
+              style={[
+                styles.input,
+                errors.fullName && touched.fullName && styles.inputError
+              ]}
             />
+            <ErrorText error={touched.fullName && errors.fullName} />
+
             <CustomInput
               placeholder="Email"
               value={formData.email}
               onChangeText={val => handleChange('email', val)}
+              onBlur={() => handleBlur('email')}
               keyboardType="email-address"
               autoCapitalize="none"
-              style={styles.input}
+              style={[
+                styles.input,
+                errors.email && touched.email && styles.inputError
+              ]}
             />
+            <ErrorText error={touched.email && errors.email} />
            
             <CustomInput
               placeholder="Password"
               value={formData.password}
               onChangeText={val => handleChange('password', val)}
+              onBlur={() => handleBlur('password')}
               secureTextEntry
-              style={styles.input}
+              style={[
+                styles.input,
+                errors.password && touched.password && styles.inputError
+              ]}
             />
+            <ErrorText error={touched.password && errors.password} />
+
             <CustomInput
               placeholder="Confirm Password"
               value={formData.confirmPassword}
               onChangeText={val => handleChange('confirmPassword', val)}
+              onBlur={() => handleBlur('confirmPassword')}
               secureTextEntry
-              style={styles.input}
+              style={[
+                styles.input,
+                errors.confirmPassword && touched.confirmPassword && styles.inputError
+              ]}
             />
-            
-            
+            <ErrorText error={touched.confirmPassword && errors.confirmPassword} />
           </View>
 
           <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
@@ -176,6 +308,17 @@ const styles = StyleSheet.create({
     color: '#4f46e5',
     fontWeight: '600',
     textDecorationLine: 'underline',
+  },
+  inputError: {
+    borderColor: '#ef4444',
+    borderWidth: 1,
+  },
+  errorText: {
+    color: '#ef4444',
+    fontSize: 12,
+    marginTop: -10,
+    marginBottom: 10,
+    marginLeft: 4,
   },
 });
 

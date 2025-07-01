@@ -28,13 +28,20 @@ const LoginScreen = ({ navigation }) => {
     setErrorMessage("");
     try {
       const res = await loginUser(email, password);
-      // dispatch(setUser(res));
-      console.log('loginUser result:', res);
-    dispatch(setUser(res));
-    console.log('Login successful!');
-      navigation.replace('Home');
+      console.log("loginUser result:", res);
+      dispatch(
+        setUser({
+          userInfo: res.user,
+          token: res.token,
+        })
+      );
+      console.log("Login successful!");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      });
     } catch (err) {
-      Alert.alert('Login failed', err.message);
+      Alert.alert("Login failed", err.message);
     } finally {
       setLoading(false);
     }

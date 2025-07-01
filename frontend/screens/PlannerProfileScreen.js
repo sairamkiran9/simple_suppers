@@ -2,11 +2,16 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/userSlice"; // update path as needed
+import { persistor } from "../redux/store"; // this must be exported in store.js
+import { handleLogout } from "../utils/logout";
 
 const PlannerProfileScreen = () => {
   const [user, setUser] = useState(null);
   const navigation = useNavigation();
   const auth = getAuth();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -21,7 +26,10 @@ const PlannerProfileScreen = () => {
   }, []);
 
   const handleLogout = async () => {
-    await signOut(auth);
+    dispatch(logout());
+
+    // Clear persisted state
+    await persistor.purge();
     navigation.replace("Login");
   };
 

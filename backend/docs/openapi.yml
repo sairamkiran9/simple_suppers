@@ -9,59 +9,265 @@ servers:
     description: Local development server
 
 paths:
-  /person:
+  /person/sync:
     post:
-      summary: Create a new person
+      summary: Sync profile from Firebase auth data
+      description: Creates or updates user profile based on Firebase authentication token
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Profile synced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileSyncResponse'
+        '401':
+          description: Invalid or missing Firebase token
+        '500':
+          description: Server error
+
+  /person/profile:
+    get:
+      summary: Get current user's profile
+      description: Retrieves the complete profile for the authenticated user
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '401':
+          description: Invalid or missing Firebase token
+        '404':
+          description: Profile not found
+        '500':
+          description: Server error
+    put:
+      summary: Update user profile
+      description: Updates profile information for the authenticated user
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PersonInput'
+              $ref: '#/components/schemas/ProfileUpdate'
       responses:
-        '201':
-          description: Person created successfully
+        '200':
+          description: Profile updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Person'
-        '400':
-          description: Validation failed
+                $ref: '#/components/schemas/ProfileResponse'
+        '401':
+          description: Invalid or missing Firebase token
         '500':
           description: Server error
 
+  /person/complete:
+    post:
+      summary: Complete user profile
+      description: Completes profile with required information like address and phone
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileCompletion'
+      responses:
+        '200':
+          description: Profile completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileCompletionResponse'
+        '400':
+          description: Validation failed
+        '401':
+          description: Invalid or missing Firebase token
+        '500':
+          description: Server error
+
+  /test/testapi:
+    get:
+      summary: Test Firebase authentication
+      description: Test endpoint to verify Firebase token authentication
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The test API is working ✅"
+        '401':
+          description: Invalid or missing Firebase token
+
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Firebase ID Token
+
   schemas:
-    PersonInput:
+    ProfileSyncResponse:
       type: object
-      required:
-        - firstname
-        - lastname
-        - email
       properties:
-        firstname:
+        profile:
+          $ref: '#/components/schemas/FirebaseProfile'
+        needsCompletion:
+          type: boolean
+          example: true
+        message:
           type: string
-          example: John
-        lastname:
+          example: "Profile needs completion"
+
+    ProfileResponse:
+      type: object
+      properties:
+        profile:
+          $ref: '#/components/schemas/FirebaseProfile'
+        needsCompletion:
+          type: boolean
+          example: false
+
+    ProfileCompletionResponse:
+      type: object
+      properties:
+        message:
           type: string
-          example: Doe
+          example: "Profile completed successfully"
+        profile:
+          $ref: '#/components/schemas/FirebaseProfile'
+        address:
+          $ref: '#/components/schemas/Address'
+
+    FirebaseProfile:
+      type: object
+      properties:
+        firebaseUid:
+          type: string
+          example: "abc123xyz789"
         email:
           type: string
           format: email
-          example: john@example.com
+          example: "john@example.com"
+        firstname:
+          type: string
+          example: "John"
+          nullable: true
+        lastname:
+          type: string
+          example: "Doe"
+          nullable: true
+        displayName:
+          type: string
+          example: "John Doe"
+          nullable: true
+        photoURL:
+          type: string
+          format: uri
+          example: "https://example.com/photo.jpg"
+          nullable: true
         phone:
           type: string
           example: "1234567890"
+          nullable: true
+        emailVerified:
+          type: boolean
+          example: true
+        profileCompleted:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-06-12T12:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-06-12T12:00:00Z"
 
-    Person:
+    ProfileCompletion:
+      type: object
+      required:
+        - phone
+        - address
+      properties:
+        firstname:
+          type: string
+          example: "John"
+        lastname:
+          type: string
+          example: "Doe"
+        phone:
+          type: string
+          pattern: "^[0-9\\-\\+\\s\\(\\)]+$"
+          example: "1234567890"
+        address:
+          $ref: '#/components/schemas/AddressInput'
+
+    ProfileUpdate:
+      type: object
+      properties:
+        firstname:
+          type: string
+          example: "John"
+        lastname:
+          type: string
+          example: "Doe"
+        phone:
+          type: string
+          pattern: "^[0-9\\-\\+\\s\\(\\)]+$"
+          example: "1234567890"
+        displayName:
+          type: string
+          example: "John Doe"
+
+    AddressInput:
+      type: object
+      required:
+        - street
+        - city
+        - state
+        - zipCode
+      properties:
+        street:
+          type: string
+          example: "123 Main St"
+        city:
+          type: string
+          example: "New York"
+        state:
+          type: string
+          example: "NY"
+        zipCode:
+          type: string
+          pattern: "^\\d{5}(-\\d{4})?$"
+          example: "10001"
+
+    Address:
       allOf:
-        - $ref: '#/components/schemas/PersonInput'
+        - $ref: '#/components/schemas/AddressInput'
         - type: object
           properties:
             id:
               type: integer
               example: 1
-            createdAt:
+            personFirebaseUid:
               type: string
-              format: date-time
-              example: "2024-06-12T12:00:00Z"
+              example: "abc123xyz789"

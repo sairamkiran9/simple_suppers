@@ -42,8 +42,14 @@ export const useGoogleAuth = (navigation) => {
         .then((userCredential) => {
           console.log("Firebase Signed in as:", userCredential.user.email);
 
-          dispatch(setUser(userCredential.user));
-          navigation.replace("Home");
+          dispatch(
+            setUser({
+              userInfo: userCredential.user, // This becomes `userInfo` in Redux
+              token: id_token, // This becomes `token` in Redux
+            })
+          );
+          // Let the auth listener handle navigation
+          console.log('Google OAuth successful - letting auth listener handle navigation');
           // // Fetch Google user profile info
           // fetch("https://www.googleapis.com/userinfo/v2/me", {
           //   headers: { Authorization: `Bearer ${access_token}` },
