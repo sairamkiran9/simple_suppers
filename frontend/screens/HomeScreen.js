@@ -36,7 +36,7 @@ const categories = [
 const testapi = async () => {
   try {
     const token = await getToken();
-    const result = await axios.get("http://localhost:3000/test/testapi", {
+    const result = await axios.get("http://localhost:3000/api/producer/menu", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -44,12 +44,14 @@ const testapi = async () => {
     console.log("API response", result.data);
   } catch (error) {
     console.error("API call failed", error.response?.data || error.message);
-    
+
     // Handle authentication errors
-    if (error.message?.includes("Session expired") || 
-        error.response?.status === 401) {
+    if (
+      error.message?.includes("Session expired") ||
+      error.response?.status === 401
+    ) {
       Alert.alert(
-        "Session Expired", 
+        "Session Expired",
         "Your session has expired. Please log in again.",
         [{ text: "OK", onPress: () => handleLogout(dispatch, navigation) }]
       );
@@ -99,8 +101,9 @@ const HomeScreen = ({ navigation }) => {
   const [planners, setPlanners] = useState(mealPlanners);
   const dispatch = useDispatch();
 
-  const { userInfo, profile, profileLoading } = useSelector((state) => state.user);
-  
+  const { userInfo, profile, profileLoading } = useSelector(
+    (state) => state.user
+  );
 
   useEffect(() => {
     console.log("User info:", userInfo);
@@ -138,19 +141,28 @@ const HomeScreen = ({ navigation }) => {
       {/* Header Bar */}
       <View style={styles.headerBar}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TouchableOpacity 
-            onPress={() => navigation.navigate('ProfileCompletion')}
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ProfileCompletion")}
             style={styles.avatarButton}
           >
             <Image
               source={{
-                uri: profile?.photoURL || userInfo?.photoURL || "https://randomuser.me/api/portraits/men/32.jpg",
+                uri:
+                  profile?.photoURL ||
+                  userInfo?.photoURL ||
+                  "https://randomuser.me/api/portraits/men/32.jpg",
               }}
               style={styles.avatar}
             />
           </TouchableOpacity>
           <Text style={styles.headerGreeting}>
-            Hi, {profile?.firstname || profile?.displayName || userInfo?.displayName || userInfo?.email?.split('@')[0] || 'User'}!
+            Hi,{" "}
+            {profile?.firstname ||
+              profile?.displayName ||
+              userInfo?.displayName ||
+              userInfo?.email?.split("@")[0] ||
+              "User"}
+            !
           </Text>
         </View>
         <TouchableOpacity
@@ -521,14 +533,14 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f3f4f6',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f3f4f6",
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#6b7280',
+    color: "#6b7280",
   },
 });
 
