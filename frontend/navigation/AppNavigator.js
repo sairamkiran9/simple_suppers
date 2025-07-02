@@ -26,15 +26,19 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator 
-        screenOptions={{ headerShown: false }}
-      >
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         {userInfo ? (
           // Authenticated user screens - always include all screens
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="ProfileCompletion" component={ProfileCompletionScreen} />
-            <Stack.Screen name="PlannerProfile" component={PlannerProfileScreen} />
+            <Stack.Screen
+              name="ProfileCompletion"
+              component={ProfileCompletionScreen}
+            />
+            <Stack.Screen
+              name="PlannerProfile"
+              component={PlannerProfileScreen}
+            />
           </>
         ) : (
           // Non-authenticated screens
@@ -51,14 +55,14 @@ const AppNavigator = () => {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#e0e7ff',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#e0e7ff",
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#6b7280',
+    color: "#6b7280",
   },
 });
 

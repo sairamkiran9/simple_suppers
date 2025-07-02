@@ -15,8 +15,8 @@ enum OrderStatus {
 }
 
 model Person {
-  firebaseUid   String   @id  // Firebase UID as primary key
-  email         String   @unique
+  firebaseUid   String   @unique  // Firebase UID as primary key
+  email         String   @unique @id
   firstname     String?  // Optional initially (from Firebase displayName parsing)
   lastname      String?  // Optional initially (from Firebase displayName parsing)
   displayName   String?  // From Firebase (Google OAuth)
@@ -36,28 +36,29 @@ model Person {
 }
 
 model Address {
-  id             Int     @id @default(autoincrement())
-  street         String
-  city           String
-  state          String
-  zipCode        String
-  personFirebaseUid String @unique
-  person         Person  @relation(fields: [personFirebaseUid], references: [firebaseUid])
+  id           Int     @id @default(autoincrement())
+  street       String
+  city         String
+  state        String
+  zipCode      String
+  personEmail  String  @unique
+  person       Person  @relation(fields: [personEmail], references: [email])
 }
 
 model Producer {
-  id                Int         @id @default(autoincrement())
-  licenseNumber     String      @unique
-  personFirebaseUid String      @unique
-  person            Person      @relation(fields: [personFirebaseUid], references: [firebaseUid])
-  menuItems         MenuItem[]
+  id           Int     @id @default(autoincrement())
+  licenseNumber String  @unique
+  personEmail   String  @unique
+  person        Person  @relation(fields: [personEmail], references: [email])
+  menuItems     MenuItem[]
 }
 
+
 model Consumer {
-  id                Int         @id @default(autoincrement())
-  personFirebaseUid String      @unique
-  person            Person      @relation(fields: [personFirebaseUid], references: [firebaseUid])
-  orders            FoodOrder[]
+  id           Int      @id @default(autoincrement())
+  personEmail  String   @unique
+  person       Person   @relation(fields: [personEmail], references: [email])
+  orders       FoodOrder[]
 }
 
 model MenuItem {

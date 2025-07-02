@@ -1,6 +1,7 @@
 # SimpleSuppers
 
 Food delivery application with:
+
 - React Native frontend (Expo)
 - Express + TypeScript backend
 - PostgreSQL + Prisma ORM
@@ -9,12 +10,13 @@ Food delivery application with:
 ## Project Setup
 
 ### Frontend (React Native)
+
 - Server runs at [http://localhost:8081](http://localhost:8081)
-    ```
-    cd frontend
-    npm install
-    npx expo start
-    ```
+  ```
+  cd frontend
+  npm install
+  npx expo start
+  ```
 
 ### Database Setup (PostgreSQL + pgAdmin)
 
@@ -29,61 +31,97 @@ docker-compose logs -f     # View logs if needed
   - Password: `admin123`
   - Master Password: `admin123`
 - **Database**: `simplesuppers`
+
   - Username: `postgres`
   - Password: `secret123`
 
+  ### Database Setup (cloud) for consistency
+
+- The connection string for the cloud db instance is included in .env file
+- Comment out the local connection string and remove comments for the cloud cnnection string to connect to the cloud db instance
+- Make sure to run the migrations for cloud instance as well if there is any change in schema
+  - npx prisma migrate dev --name [name of migration] - for local instance first [this creates the migration]
+  - npx prisma migrate deploy for the cloud instance
+- The cloud db instance of postgress is hosted on https://dashboard.render.com/
 
 ### Prisma (ORM)
 
 - Run migration:
 
-    ```
-    npx prisma migrate dev --name init
-    ```
+  ```
+  npx prisma migrate dev --name init
+  ```
 
 - Open Prisma Studio (GUI DB explorer):
 
-    ```
-    npx prisma studio
-    ```
+  ```
+  npx prisma studio
+  ```
 
 - Access: [http://localhost:5555](http://localhost:5555)
-
 
 ### Backend (Express + TypeScript)
 
 - Server runs at: [http://localhost:3000](http://localhost:3000)
 
-    ```
-    cd backend
-    npm install
-    npm run dev
-    ```
+  ```
+  cd backend
+  npm install
+  npm run dev
+  ```
 
+## API Documentation
 
+### Swagger UI
 
-## API Usage
+- **Swagger/OpenAPI Documentation**: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+- Interactive API testing interface with authentication support
 
-### \[POST] `/person` — Create a person
+### Authentication
 
-```
-curl --location 'http://localhost:3000/person' \
+The API uses Firebase Authentication with Bearer tokens. Protected endpoints require an `Authorization` header.
+
+#### Getting Access Token for API Testing
+
+1. **Start the frontend application:**
+
+   ```bash
+   cd frontend
+   npx expo start
+   ```
+
+2. **Login through the app** - The access token will be automatically logged to the console when making authenticated requests.
+
+3. **Copy the token** from the console output that shows:
+
+   ```
+   Access Token for Swagger: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+   ```
+
+4. **Use in Swagger UI:**
+   - Open [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+   - Click the "Authorize" button
+   - Enter value in input field: `YOUR_TOKEN_HERE`
+   - Click "Authorize"
+
+#### Manual API Requests
+
+For testing with curl or other tools:
+
+```bash
+curl --location 'http://localhost:3000/api/endpoint' \
+--header 'Authorization: Bearer YOUR_TOKEN_HERE' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-  "firstname": "John",
-  "lastname": "Mark",
-  "email": "kjmn@example.com",
-  "phone": "1234567890"
+  "your": "data"
 }'
 ```
 
-Returns: JSON of the created person
+### Available Endpoints
 
+- **Person Management**: Create, read, update person profiles
+- **Profile Completion**: Complete user profiles with additional details
+- **Address Management**: Manage user addresses
+- **Authentication**: Firebase-based user authentication
 
-
-## 📚 API Documentation (OpenAPI Support)
-
-- Access to Swagger/OpenAPI at: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
-
-
-
+See the full API documentation in Swagger UI for detailed endpoint information, request/response schemas, and interactive testing.

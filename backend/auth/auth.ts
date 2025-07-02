@@ -18,7 +18,7 @@ export const authenticateFirebase = async (
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-    (req as any).user = decodedToken;
+    req.user = decodedToken;
     next();
   } catch (err) {
     console.error("Token verification failed", err);
